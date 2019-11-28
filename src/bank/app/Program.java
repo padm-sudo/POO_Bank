@@ -19,21 +19,17 @@ public class Program {
 			case "RC":
 				// Regista cliente
 				// RC NomeCliente
-				String clientName = commands[1];
+				commandRC(bank, commands);
 				break;
 			case "AC":
 				// Adiciona conta a cliente
 				// AC NomeCliente TipoConta NomeConta
-				String clientName = commands[1];
-				String accountType = commands[2];
-				String accountName = commands[3];
+				commandAC(bank, commands);
 				break;
 			case "AA":
 				// Adiciona montante, positivo ou negativo, a conta
 				// AA NomeCliente NomeConta Montante
-				String clientName = commands[1];
-				String accountName = commands[2];
-				Double amount = Double.parseDouble(commands[3]);
+				commandAA(bank, commands);
 				break;
 			case "CAT":
 				// Altera o tipo de conta
@@ -63,5 +59,60 @@ public class Program {
 			}
 		}
 		input.close();
+	}
+
+	private static void commandAA(Bank bank, String[] commands) {
+		String clientName = commands[1];
+		String accountName = commands[2];
+		Double amount = Double.parseDouble(commands[3]);
+		if(!bank.hasClient(clientName)) {
+			System.out.println("Cliente inexistente.");
+		}
+		else if(!bank.hasAccount(clientName, accountName)) {
+			System.out.println("Conta inexistente.");
+		}
+		else {
+			boolean isInvalidWithdrawal = false;
+			if(amount < 0) {
+				if(bank.isClientBlocked(clientName)) {
+					System.out.println("Levantamentos bloqueados para o cliente.");
+					isInvalidWithdrawal = true;
+				}
+				else if(bank.getBalance(clientName, accountName) < Math.abs(amount)) {
+					System.out.println("Fundos insuficientes na conta.");
+					isInvalidWithdrawal = true;
+				}
+			}
+			else if(!isInvalidWithdrawal) {
+				bank.registerOperation(clientName, accountName, amount);
+			}
+		}
+	}
+
+	private static void commandAC(Bank bank, String[] commands) {
+		String clientName = commands[1];
+		String accountType = commands[2];
+		String accountName = commands[3];
+		if(!bank.hasClient(clientName)) {
+			System.out.println("Cliente inexistente.");
+		}
+		else if(!bank.hasAccountType(accountType)) {
+			System.out.println("Tipo de conta inexistente.");
+		}
+		else {
+			bank.createAccount(clientName, accountType, accountName);
+			System.out.println("Conta constituída com sucesso.");
+		}
+	}
+
+	private static void commandRC(Bank bank, String[] commands) {
+		String clientName = commands[1];
+		if(bank.hasClient(clientName)) {
+			System.out.println("Cliente existente.");
+		}
+		else {
+			bank.createClient(clientName);
+			System.out.println("Cliente registado com sucesso.");
+		}
 	}
 }
