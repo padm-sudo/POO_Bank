@@ -1,7 +1,12 @@
+package bank.app;
 import java.util.Scanner;
+
+import bank.controllers.Bank;
+import bank.controllers.BankClass;
 
 public class Program {
 	public static void main(String[] args) {
+		Bank bank = new BankClass();
 		Scanner input = new Scanner(System.in);
 		while(input.hasNextLine()) {
 			String line = input.nextLine();
@@ -21,7 +26,7 @@ public class Program {
 				// AC NomeCliente TipoConta NomeConta
 				String clientName = commands[1];
 				String accountType = commands[2];
-				String accountName = commands[3]
+				String accountName = commands[3];
 				break;
 			case "AA":
 				// Adiciona montante, positivo ou negativo, a conta
